@@ -12,7 +12,15 @@ class DepartemenController extends Controller
     {
         return response()->json([
             "status"    => true,
-            "data"      => []
+            "data"      => Departemen::get()
+        ]);
+    }
+
+    public function show($id)
+    {
+        return response()->json([
+            "status"    => true,
+            "data"      => Departemen::find($id)
         ]);
     }
 

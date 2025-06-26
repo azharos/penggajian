@@ -12,7 +12,15 @@ class JabatanController extends Controller
     {
         return response()->json([
             "status"    => true,
-            "data"      => []
+            "data"      => Jabatan::get()
+        ]);
+    }
+
+    public function show($id)
+    {
+        return response()->json([
+            "status"    => true,
+            "data"      => Jabatan::find($id)
         ]);
     }
 

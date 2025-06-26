@@ -15,7 +15,15 @@ class KaryawanController extends Controller
     {
         return response()->json([
             "status"    => true,
-            "data"      => []
+            "data"      => Karyawan::get()
+        ]);
+    }
+
+    public function show($id)
+    {
+        return response()->json([
+            "status"    => true,
+            "data"      => Karyawan::find($id)
         ]);
     }
 
