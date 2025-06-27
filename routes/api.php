@@ -6,20 +6,16 @@ use App\Http\Controllers\API\KaryawanController;
 use App\Http\Controllers\API\KomponenGajiController;
 use App\Http\Controllers\API\PayrollRunController;
 use App\Http\Controllers\API\SlipGajiController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+use Illuminate\Support\Facades\Hash;
 
-// Route::get('karyawan', function () {
-//     return response()->json([
-//         "status"    => true,
-//         "data"      => []
-//     ]);
-// });
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
 
 Route::post('login', function (Request $request) {
     $credentials = [
@@ -35,7 +31,8 @@ Route::post('login', function (Request $request) {
             "status"    => false,
             "data"      => [
                 'user'  => $user,
-                'token' => $token
+                'token' => $token,
+                "type"  => "Bearer"
             ]
         ]);
     }
@@ -44,10 +41,37 @@ Route::post('login', function (Request $request) {
         "status"    => false,
         "data"      => []
     ]);
+})->name('login');
+
+Route::post('register', function (Request $request) {
+
+    // Logic Add
+    $user = User::create([
+        'name'      => $request->name,
+        'email'     => $request->email,
+        'password'  => Hash::make($request->password),
+    ]);
+
+    return response()->json([
+        "status"    => true,
+        'data'      => $user
+    ]);
 });
 
-Route::resource('departemen', DepartemenController::class);
-Route::resource('jabatan', JabatanController::class);
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::resource('departemen', DepartemenController::class);
+    Route::resource('jabatan', JabatanController::class);
+
+    Route::post('logout', function (Request $request) {
+        $user = $request->user();
+        $user->tokens()->delete();
+
+        return response()->json([
+            "status"    => true,
+        ]);
+    });
+});
 
 Route::resource('karyawan', KaryawanController::class);
 Route::resource('komponen-gaji', KomponenGajiController::class);
