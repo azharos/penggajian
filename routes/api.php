@@ -28,7 +28,7 @@ Route::post('login', function (Request $request) {
         $token = $user->createToken('penggajian')->plainTextToken;
 
         return response()->json([
-            "status"    => false,
+            "status"    => true,
             "data"      => [
                 'user'  => $user,
                 'token' => $token,
